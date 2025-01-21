@@ -1,14 +1,15 @@
-
 use iced::Element;
 use iced::widget::{text, button}; 
 
-use crate::gui::widgets;
+
+use super::widgets::NRCanvas;
+use super::GlobalMessage;
 
 
 
 #[derive(Debug, Default)]
 pub struct NRPlayer {
-    _nr_canvas: widgets::NRCanvas,
+    nr_canvas: NRCanvas,
     state: NRPlayerState,
 }
 
@@ -17,28 +18,26 @@ struct NRPlayerState {
     count: u8,
 }
 
-#[derive(Debug, Clone)]
-pub enum NRPlayerMessage {
-    First,
-    _Second,
-}
+
 
 impl NRPlayer {
     pub fn _new() -> Self {
-        NRPlayer {
-            _nr_canvas: widgets::NRCanvas::default(),
-            state: NRPlayerState{ count: 0 },
-        }
+        NRPlayer::default()
     }
 
-    pub fn view(&self) -> Element<NRPlayerMessage> {
+    pub fn view(&self) -> Element<GlobalMessage> {
         iced::widget::column![
             text(format!("Testing {}", self.state.count)),
-            button("+").on_press(NRPlayerMessage::First)
+            button("+").on_press(GlobalMessage::First),
+            self.nr_canvas.view(),
         ].into()
     }
 
-    pub fn update(&mut self, message: NRPlayerMessage) {
-        if let NRPlayerMessage::First = message { self.state.count += 1; }
+    pub fn update(&mut self, message: GlobalMessage) {
+        match message {
+            GlobalMessage::First => { self.state.count += 1; },
+            GlobalMessage::CanvasMessage(_) => { self.state.count += 10; },
+            _ => { },
+        }
     }
 }
