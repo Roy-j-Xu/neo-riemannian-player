@@ -1,4 +1,3 @@
-mod nr_canvas;
+pub mod note_canvas;
 
-pub use nr_canvas::NRCanvas;
-pub use nr_canvas::CanvasMessage;
+use note_canvas::NoteCanvas;
