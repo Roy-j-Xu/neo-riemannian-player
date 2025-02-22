@@ -1,7 +1,6 @@
 mod gui;
 mod core;
-
-const NUM_OF_NOTES: usize = 88;
+mod configs;
 
 fn main() {
     // iced::application(

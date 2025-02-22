@@ -1,4 +1,4 @@
-pub mod notes;
-
+pub mod note_list;
 pub mod nets;
-pub use notes::NoteList;
+
+pub use note_list::NoteList;
