@@ -13,14 +13,14 @@ pub trait MusicalNet {
     
     /// Provide data for visualization, using unit length. This data requires further
     /// mapping in order to be presented by iced
-    fn layout(&self, note_list: &NoteList) -> Vec<Point2D<f32, f32>>;
+    fn layout(&self) -> Vec<Point2D<f32, f32>>;
 
     /// Press the given location of the net
-    fn press(&self, note_list: &NoteList, location: f32) -> Result<bool, String>;
+    fn press(&self, location: f32) -> Result<bool, String>;
     
-    fn parallel_move(&self, note_list: &NoteList, intervel: usize);
+    fn parallel_move(&self, intervel: usize);
 
-    fn rotate(&self, note_list: &NoteList, center_note: usize, conter_clockwise: bool);
+    fn rotate(&self, center_note: usize, conter_clockwise: bool);
 
 
 }
@@ -30,6 +30,7 @@ pub trait MusicalNet {
 mod musical_net_tests {
     use super::*;
 
+    // helper function to print out a net on terminal
     fn print_net(layout: Vec<Point2D<f32, f32>>) {
         let width = layout.iter().fold(0, |acc, point| {acc.max(point.x as usize)});
         let height = layout.iter().fold(0, |acc, point| {acc.max(point.y as usize)});
@@ -50,9 +51,9 @@ mod musical_net_tests {
     #[test]
     fn layout_tonnetz() {
         let note_list = NoteList::of_size(40);
-        let tonnetz = Tonnetz;
+        let tonnetz = Tonnetz::new(&note_list);
 
-        let layout = tonnetz.layout(&note_list);
+        let layout = tonnetz.layout();
 
         print_net(layout);
     }

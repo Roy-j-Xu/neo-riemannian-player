@@ -4,12 +4,23 @@ use crate::core::nets::MusicalNet;
 use crate::core::NoteList;
 
 
-pub struct Tonnetz;
+/// Unlike duel-Tonnetz, Tonnetz does not need another layer of state
+pub struct Tonnetz {
+    note_list: NoteList,
+}
+
+
+impl Tonnetz {
+    pub fn new(note_list: &NoteList) -> Tonnetz {
+        Tonnetz{ note_list: note_list.clone() }
+    }
+}
+
 
 impl MusicalNet for Tonnetz {
 
-    fn layout(&self, note_list: &NoteList) -> Vec<Point2D<f32, f32>> {
-        let note_range = note_list.size();
+    fn layout(&self) -> Vec<Point2D<f32, f32>> {
+        let note_range = self.note_list.size();
         let mut results = vec![Point2D::new(0.0, 0.0); note_range];
 
         for (index, point) in results.iter_mut().enumerate() {
@@ -29,16 +40,17 @@ impl MusicalNet for Tonnetz {
         results
 
     }
-
-    fn press(&self, note_list: &NoteList, location: f32) -> Result<bool, String> {
+    
+    fn press(&self, location: f32) -> Result<bool, String> {
         todo!()
     }
-
-    fn parallel_move(&self, note_list: &NoteList, intervel: usize) {
+    
+    fn parallel_move(&self, intervel: usize) {
         todo!()
     }
-
-    fn rotate(&self, note_list: &NoteList, center_note: usize, conter_clockwise: bool) {
+    
+    fn rotate(&self, center_note: usize, conter_clockwise: bool) {
         todo!()
     }
+    
 }
