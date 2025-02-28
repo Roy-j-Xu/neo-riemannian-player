@@ -71,14 +71,16 @@ impl NoteList {
     // Operations
     // --------------
 
-    pub fn parallel_move(&self, intervel: usize) -> Result<(), String> {
-        let size = self.inner().len();
+    pub fn parallel_move(&self, intervel: i32) -> Result<(), String> {
+        let size = self.inner().len() as i32;
         let mut note_list = self.inner();
 
         let mut moved_notes = VecDeque::<usize>::new();
         for (index, pressed) in note_list.iter_mut().enumerate() {
             if *pressed {
-                moved_notes.push_back((index + intervel) % size);
+                let mut moved_note_i32 = (index as i32 + (intervel % size)) % size;
+                if moved_note_i32 < 0 { moved_note_i32 += size; }
+                moved_notes.push_back(moved_note_i32.try_into().unwrap());
                 *pressed = false;
             }
         }
