@@ -1,96 +1,15 @@
 use iced::Point;
+use net_components::{NetOperation, Transform};
 
-use crate::core::NoteList;
-
+mod net_components;
 mod tonnetz;
 
-
-/// --- First component: net state --
-
-pub trait NetState { }
-
-
-
-/// --- Second component: net operator ---
-
-pub enum NetOperation {
-    ParallelMove(i32),
-    Rotate{ target: i32, center: i32 },
-}
-
-pub trait NetOperator<T> where T: NetState {
+pub trait MusicalNet {
     fn supported_operations() -> Vec<String>;
-    
-    fn apply(net: T, operation: NetOperation) -> Result<(), String>;
+    fn apply_operation(operation: NetOperation) -> Result<(), String>;
+    fn set_transform(transform: Transform);
+    fn press(point: Point);
 }
-
-
-
-/// --- Third component: visual state ---
-
-#[derive(Clone, Debug)]
-pub struct Transform {
-    pub ratio: Point<f32>,
-    pub shift: Point<f32>,
-}
-
-impl Default for Transform {
-    fn default() -> Self {
-        Self { ratio: Point::new(1.0, 1.0), shift: Point::new(0.0, 0.0) }
-    }
-}
-
-impl Transform {
-
-    pub fn apply(&self, point: &Point<f32>) -> Point<f32> {
-        Point::<f32>::new(self.ratio.x * point.x + self.shift.x, self.ratio.y * point.y + self.shift.y)
-    }
-    
-    pub fn reverse(&self, point: &Point<f32>) -> Point<f32> {
-        Point::<f32>::new((point.x - self.shift.x) / self.ratio.x, (point.y - self.shift.y) / self.ratio.y)
-    }
-}
-
-
-type Blueprint = Vec<Point<f32>>;
-
-pub struct VisualState
-{
-    blueprint: Blueprint,
-    transform: Transform,
-    layout: Blueprint,
-}
-
-impl VisualState {
-    pub fn new(blueprint: Blueprint) -> Self {
-        let layout = blueprint.clone();
-        VisualState {
-            blueprint: blueprint,
-            transform: Transform::default(),
-            layout: layout,
-        }
-    }
-
-    fn update_layout(&mut self) {
-        for (index, point) in self.blueprint.iter().enumerate() {
-            self.layout[index] = self.transform.apply(point);
-        }
-    }
-
-    pub fn update_ratio(&mut self, x: f32, y: f32) {
-        self.transform.ratio.x = x;
-        self.transform.ratio.y = y;
-        self.update_layout();
-    }
-
-    pub fn update_shift(&mut self, x: f32, y: f32) {
-        self.transform.shift.x = x;
-        self.transform.shift.y = y;
-        self.update_layout();
-    }
-}
-
-
 
 
 #[cfg(test)]

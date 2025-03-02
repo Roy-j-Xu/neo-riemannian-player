@@ -1,27 +1,32 @@
 use iced::Point;
 
 use crate::core::NoteList;
+use crate::core::types::Blueprint;
+use super::net_components::{
+    NetOperation,
+    NetOperator,
+    NetState,
+    VisualState
+};
 
-use super::{NetOperation, NetOperator, NetState};
 
-
-/// Unlike duel-Tonnetz, Tonnetz does not need another layer of state
-pub struct TonnetzState {
-    note_list: NoteList,
-    rotational_center: i32,
+pub struct Tonnetz {
+    state: TonnetzState,
+    operator: TonnetzOperator,
+    visual_state: VisualState,
 }
 
-impl NetState for TonnetzState { }
-
-impl TonnetzState {
-    pub fn new(note_list: &NoteList) -> TonnetzState {
-        TonnetzState { 
-            note_list: note_list.clone(),
-            rotational_center: -1,
+impl Tonnetz {
+    pub fn new(note_list: &NoteList) -> Self {
+        Tonnetz {
+            state: TonnetzState::new(note_list),
+            operator: TonnetzOperator{},
+            visual_state: VisualState::new(Tonnetz::initialize_layout(note_list)),
         }
     }
-    
-    fn initialize_layout(note_range: usize) -> Vec<Point<f32>> {
+
+    fn initialize_layout(note_list: &NoteList) -> Blueprint {
+        let note_range = note_list.size();
         let mut results = vec![Point::new(0.0, 0.0); note_range];
         
         for (index, point) in results.iter_mut().enumerate() {
@@ -43,7 +48,24 @@ impl TonnetzState {
 }
 
 
-pub struct TonnetzOperator;
+struct TonnetzState {
+    note_list: NoteList,
+    rotational_center: i32,
+}
+
+impl NetState for TonnetzState { }
+
+impl TonnetzState {
+    pub fn new(note_list: &NoteList) -> TonnetzState {
+        TonnetzState { 
+            note_list: note_list.clone(),
+            rotational_center: -1,
+        }
+    }
+}
+
+
+struct TonnetzOperator;
 
 impl NetOperator<TonnetzState> for TonnetzOperator {
     fn supported_operations() -> Vec<String> {
